@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My 2D Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+
+    /* Container for the current level */
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* The fade effect for level transitions */
+    .fade {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      z-index: 100;
+    }
+
+    .fade.active {
+      opacity: 1;
+    }
+
+    /* This iframe displays your level background */
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Main container -->
+  <div id="game-container">
+    <!-- Start with Level 1 -->
+    <iframe id="level-frame" src="./src/level1/background/background.html"></iframe>
+    <div class="fade" id="fade"></div>
+  </div>
+
+  <!-- Your game logic -->
+  <script src="./main.js"></script>
+</body>
+</html>
