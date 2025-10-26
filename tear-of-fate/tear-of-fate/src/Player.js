@@ -25,6 +25,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.graphics = scene.add.graphics();
         this.scene = scene;
 
+
         this.stateMachine = new StateMachine('idle', {
             idle: new IdleState(),
             run: new RunState(),
@@ -63,18 +64,23 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         const handOffsetX = 20;
         const handOffsetY = 10;
         const laserLength = 300;
-        const startX = this.x + handOffsetX;
+        const startX = this.x + (this.flipX ? -handOffsetX : handOffsetX);
         const startY = this.y + handOffsetY;
         const endX = startX + (this.flipX ? -laserLength : laserLength);
         const endY = startY;
 
         // Draw the visible laser
-        let laserGraphics = this.scene.add.graphics();
-        laserGraphics.lineStyle(4, 0xFFD700, 1);
-        laserGraphics.beginPath();
-        laserGraphics.moveTo(startX, startY);
-        laserGraphics.lineTo(endX, endY);
-        laserGraphics.strokePath();
+        let dx = endX - startX;
+        let dy = endY - startY;
+        let length = Math.sqrt(dx * dx + dy * dy);
+        let angle = Math.atan2(dy, dx);
+
+        let laser = this.scene.add.graphics();
+        laser.fillGradientStyle(0xff0000, 0xff00ff, 0xff00ff, 0xff0000, 1);
+        laser.fillRect(0, -2, length, 4); // width 4px, length along X
+        laser.setPosition(startX, startY);
+        laser.setRotation(angle);
+
 
         // Check overlap with all enemies
         this.scene.enemies.getChildren().forEach(enemy => {
@@ -87,7 +93,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // Remove the laser after 0.1s
         this.scene.time.delayedCall(100, () => {
-            laserGraphics.destroy();
+            laser.destroy();
         });
         state.locked = false;
     }

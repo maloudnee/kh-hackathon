@@ -16,11 +16,10 @@ export default class IdleState extends State {
 
     update(player, dt, inputs) {
 
-
+        console.log(this.stateMachine.possibleStates);
         if (Phaser.Input.Keyboard.JustDown(inputs.space) && player.body.blocked.down) {
             this.stateMachine.transition("jump");
         } else if (Phaser.Input.Keyboard.JustDown(inputs.attack)) {
-            console.log("in update")
             if (player.currentWeapon instanceof Sword) {
                 this.stateMachine.transition("sword");
             } else if (player.currentWeapon instanceof Tear) {

@@ -131,13 +131,7 @@ export default class Scene2 extends Phaser.Scene {
         this.physics.add.collider(this.enemies, this.ground);
         this.physics.add.collider(this.goldenTears, this.ground);
 
-        // --- STATE MACHINE ---
-        this.stateMachine = new StateMachine('idle', {
-            idle: new IdleState(),
-            run: new RunState(),
-            jump: new JumpState(),
-            attack: new AttackState(),
-        }, this.player);
+
 
         // --- ENEMIES ---
         this.spawnEnemy(250, 100);
@@ -230,6 +224,6 @@ export default class Scene2 extends Phaser.Scene {
             attack: this.attackKey,
         };
 
-        this.stateMachine.step(delta, inputs);
+        this.player.update(delta, inputs);
     }
 }
