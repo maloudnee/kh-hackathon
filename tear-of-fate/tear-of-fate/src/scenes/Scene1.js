@@ -55,22 +55,23 @@ export default class Scene1 extends Phaser.Scene {
             classType: Tear,
             runChildUpdate: true
         });
-
-        this.player = new Player(this, 200, 200, this.playerTears);
-        this.player.setCollideWorldBounds(true);
-        this.player.setSize(16, 64);
-        this.player.health = 3;
-        this.player.health = this.player.health.maxHealth;
-
-        this.physics.add.collider(this.player, ground);
-        this.physics.world.gravity.y = 500;
-        // Idle animation
         this.anims.create({
             key: 'idle',
             frames: this.anims.generateFrameNumbers('idle', { start: 0, end: 5 }),
             frameRate: 6,
             repeat: -1
         });
+
+        this.player = new Player(this, 200, 200, this.playerTears);
+        this.player.setCollideWorldBounds(true);
+        this.player.setSize(16, 64);
+        this.player.health = 3;
+        //this.player.health = this.player.health.maxHealth;
+
+        this.physics.add.collider(this.player, ground);
+        this.physics.world.gravity.y = 500;
+        // Idle animation
+
 
         // Run animation
         this.anims.create({
@@ -205,6 +206,7 @@ export default class Scene1 extends Phaser.Scene {
             attack: this.attackKey,
         };
         this.player.update(delta, inputs);
+
         this.updatePlayerHealthBar();
     }
 }

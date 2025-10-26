@@ -21,7 +21,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.graphics = scene.add.graphics();
         this.scene = scene;
 
-
         this.stateMachine = new StateMachine('idle', {
             idle: new IdleState(),
             run: new RunState(),
@@ -52,6 +51,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     shootHappyHands(state) {
+        console.log("hands");
         const handOffsetX = 20;
         const handOffsetY = 10;
         const laserLength = 300;
@@ -102,7 +102,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(delta, inputs) {
-        this.stateMachine.step(delta, inputs)
+        this.stateMachine.step(delta, inputs);
     }
 
 }
