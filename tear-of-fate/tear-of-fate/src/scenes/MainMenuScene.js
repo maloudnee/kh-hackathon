@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 export default class MainMenu extends Phaser.Scene {
     constructor() {
         super("mainmenu");
@@ -29,7 +30,7 @@ export default class MainMenu extends Phaser.Scene {
             .setScale(0.1);
 
         playButton.on('pointerdown', () => {
-            this.scene.start('scene2'); 
+            this.scene.start('scene1'); 
         });
 
         playButton.on('pointerover', () => playButton.setTint(0x44ff44));

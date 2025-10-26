@@ -4,7 +4,7 @@ import RunState from '../States/RunState.js';
 import JumpState from '../States/JumpState.js';
 import AttackState from '../States/AttackState.js';
 import Enemy from '../Enemy.js';
-import Tear from '../Tear.js';
+import Tear from '../weapons/Tear.js';
 import Player from '../Player.js';
 
 export default class Scene2 extends Phaser.Scene {

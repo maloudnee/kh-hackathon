@@ -12,7 +12,7 @@ const config = {
     width: width,
     height: height,
     backgroundColor: '#222',
-    scene: [MainMenu, Scene2, Scene1],
+    scene: [MainMenu, Scene1, Scene2],
     physics: {
         default: 'arcade',
         arcade: {
