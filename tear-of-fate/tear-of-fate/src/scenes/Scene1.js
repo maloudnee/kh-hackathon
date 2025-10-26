@@ -6,6 +6,7 @@ import AttackState from '../States/AttackState.js';
 import Enemy from '../Enemy.js';
 import Tear from '../weapons/Tear.js';
 import Player from '../Player.js';
+import { WebSocketService } from '../WebsocketService.js';
 
 export default class Scene1 extends Phaser.Scene {
     constructor() {
@@ -16,11 +17,13 @@ export default class Scene1 extends Phaser.Scene {
         this.load.image('joybackground2', 'assets/joybackground2.png');
         this.load.spritesheet('idle', 'assets/StickmanPack/Idle/Thin.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
-        this.load.spritesheet('run', "assets/StickmanPack/Run/Run.png", { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet("jump", "assets/StickmanPack/Jump/Jump.png", { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('run', "assets/player.png", { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet("jump", "assets/playerjumping.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("player_attack", "assets/StickmanPack/Punch/Punch.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("devilIdle", 'assets/Flying Demon 2D Pixel Art/Sprites/with_outline/IDLE.png', {frameWidth: 81, frameHeight: 71});
         this.load.image("tear", "assets/tear-png-33469.png");
+        this.load.image("player_sword", 'assets/playersword.png');
+        this.load.image("vortex", "assets/vortex.png")
         
         // --- FIX: Add the missing 'heart' image asset load for the HUD ---
         this.load.image('heart', 'assets/heart.png'); // 🚨 CHECK THIS PATH 🚨
@@ -66,7 +69,7 @@ export default class Scene1 extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
         this.player.setSize(16, 64);
         this.player.health = 3;
-        //this.player.health = this.player.health.maxHealth;
+        this.player.health = this.player.health.maxHealth;
 
         this.physics.add.collider(this.player, ground);
         this.physics.world.gravity.y = 500;
@@ -153,6 +156,37 @@ export default class Scene1 extends Phaser.Scene {
 
         this.physics.add.overlap(this.player, this.enemies, this.onPlayerHit, null, this);
         this.physics.add.overlap(this.playerTears, this.enemies, this.onTearHit, null, this);
+
+        // Set up websocket
+        WebSocketService.registerScene(this);
+
+        // Timer that repeats to send data 
+        this.time.addEvent({
+            delay: 50,
+            callback: this.sendPlayerState,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    sendPlayerState() {
+        const gameData = {
+            player_stats: {
+                health: this.player.health,
+                lives: this.lives,
+                score: this.score,
+                position: { x: this.player.x, y: this.player.y },
+            },
+            level: 1,
+            timestamp: Date.now()
+        };
+        WebSocketService.sendGameData(gameData);
+    }
+
+    handleAgentResponse(data) {
+        if(data.enemy_actions) {
+            this.executeEnemyActions(data.enemy_actions);
+        }
     }
 
 
