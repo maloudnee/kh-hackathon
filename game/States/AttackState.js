@@ -1,17 +1,17 @@
 import State from "../State.js"
+import Tear from "../weapons/Tear.js";
+import Sword from "../weapons/Sword.js";
+import HappyHands from "../weapons/HappyHands.js";
 
 export default class AttackState extends State{
     enter(player) {
-        this.locked = true;  // lock during the attack
-        player.body.setVelocityX(0);
-        player.anims.play('attack', true);
-        player.fireProjectile();
+        if(player.currentWeapon instanceof Tear) {
+            player.actionFSM
+        } else if(player.currentWeapon instanceof Sword) {
 
-        // Unlock when the attack animation ends
-        player.once('animationcomplete', () => {
-            this.locked = false;
-            this.stateMachine.transition('idle');
-        });
+        } else if(player.currentWeapon instanceof HappyHands) {
+
+        }
 
     }
 
@@ -20,6 +20,6 @@ export default class AttackState extends State{
     }
 
     exit(player) {
-        this.locked = false;
+
     }
 }

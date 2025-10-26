@@ -1,4 +1,7 @@
 import State from "../State.js"
+import Sword from "../weapons/Sword.js";
+import Tear from "../weapons/Tear.js";
+import HappyHands from "../weapons/HappyHands.js";
 
 export default class RunState extends State {
     enter(player) {
@@ -22,8 +25,14 @@ export default class RunState extends State {
         if (Phaser.Input.Keyboard.JustDown(inputs.space) && player.body.blocked.down) {
             this.stateMachine.transition('jump');
         }
-        if (inputs.attack.isDown) {
-            this.stateMachine.transition('attack');
+
+        if (Phaser.Input.Keyboard.JustDown(inputs.attack) && player.currentWeapon instanceof Sword) {
+            this.stateMachine.transition("sword");
+        }else if (Phaser.Input.Keyboard.JustDown(inputs.attack) && player.currentWeapon instanceof Tear) {
+            this.stateMachine.transition("tear");
+        }
+        else if (Phaser.Input.Keyboard.JustDown(inputs.attack) && player.currentWeapon instanceof HappyHands) {
+            this.stateMachine.transition("happyHands");
         }
         if(player.body.velocity.x === 0) this.stateMachine.transition('idle');
     }

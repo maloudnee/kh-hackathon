@@ -4,7 +4,7 @@ import RunState from "../States/RunState.js";
 import JumpState from "../States/JumpState.js";
 import AttackState from "../States/AttackState.js";
 import Enemy from "../Enemy.js";
-import Tear from "./Tear.js";
+import Tear from "../weapons/Tear.js";
 import Player from "../Player.js"
 
 export default class Scene1 extends Phaser.Scene {
@@ -69,9 +69,7 @@ export default class Scene1 extends Phaser.Scene {
         this.playerTears = this.physics.add.group({
                 classType: Tear,
             runChildUpdate: true
-        }
-
-        );
+        });
 
 
         this.add.image(200, 150, "background");
@@ -88,12 +86,6 @@ export default class Scene1 extends Phaser.Scene {
         this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
 
 
-        this.stateMachine = new StateMachine('idle', {
-            idle: new IdleState(),
-            run: new RunState(),
-            jump: new JumpState(),
-            attack: new AttackState(),
-        }, this.player);
 
 
 
@@ -104,12 +96,16 @@ export default class Scene1 extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.enemies, this.onPlayerHit, null, this);
         this.physics.add.overlap(this.playerTears, this.enemies, this.onTearHit, null, this);
     }
+
+
     spawnEnemy(x, y, ai = 'patrol') {
         const enemy = this.enemies.get(x, y, 'enemy');
         if (!enemy) return; // pool exhausted
         enemy.spawn(x, y, ai);
         enemy.play('devil_idle');
     }
+
+
     onPlayerHit(player, enemy) {
         player.takeDamage(1);
         enemy.setRecentlyHitPlayer();
@@ -128,7 +124,7 @@ export default class Scene1 extends Phaser.Scene {
             space: this.cursors.space,
             attack: this.attackKey,
         };
-        this.stateMachine.step(delta, inputs);
+        this.player.update(delta, inputs);
 
 
     }
