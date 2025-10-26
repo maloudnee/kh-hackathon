@@ -35,6 +35,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }, this);
 
         this.currentWeapon = new HappyHands(this.scene);
+        if(this.level === 2) {
+            this.currentWeapon = new Tear(this.scene);
+        }
+
+        this.unlockedHappy = false;
 
     }
     setCurrentWeapon(weapon) {
@@ -108,12 +113,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.stateMachine.step(delta, inputs);
 
         let topemotion = window.currentEmotion;
-        if(topemotion === "happy") {
-            this.currentWeapon = new HappyHands(this.scene);
-        } else if(topemotion === "sad") {
-            this.currentWeapon = new Tear(this.scene);
-        } else {
-            this.currentWeapon = new Sword(this.scene);
+        if(this.level === 1) {
+            if(topemotion === "happy") {
+                this.currentWeapon = new HappyHands(this.scene);
+            } else if(topemotion === "angry") {
+                this.currentWeapon = new Sword(this.scene);
+            }
+        }
+        if(this.level === 2) {
+            if(topemotion === "happy" && this.unlockedHappy) {
+                this.currentWeapon = new HappyHands(this.scene);
+            }
         }
     }
 
