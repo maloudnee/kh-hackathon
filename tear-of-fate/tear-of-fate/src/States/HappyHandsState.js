@@ -5,7 +5,7 @@ export default class HappyHandsState extends State {
     enter(player) {
         this.locked = true;  // lock during the attack
         player.body.setVelocityX(0);
-        //player.anims.play('happy_hands', true);
+        player.anims.play('happy_hands', true);
         player.shootHappyHands(this);
 
         // Unlock when the attack animation ends

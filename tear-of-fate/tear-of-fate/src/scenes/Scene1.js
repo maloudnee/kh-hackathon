@@ -15,16 +15,16 @@ export default class Scene1 extends Phaser.Scene {
 
     preload() {
         this.load.image('joybackground2', 'assets/joybackground2.png');
-        this.load.spritesheet('idle', 'assets/playersword.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('idle', 'assets/player.png', { frameWidth: 128, frameHeight: 128 });
         this.load.image('ground', 'assets/platform.png');
         this.load.spritesheet('run', "assets/playersword.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("jump", "assets/playerjumping.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("player_attack", "assets/StickmanPack/Punch/Punch.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("devilIdle", 'assets/Flying Demon 2D Pixel Art/Sprites/with_outline/IDLE.png', {frameWidth: 81, frameHeight: 71});
         this.load.image("tear", "assets/tear-png-33469.png");
-        this.load.image("player_sword", 'assets/playersword.png');
+        this.load.spritesheet("player_sword", 'assets/playersword.png', { frameWidth: 128, frameHeight: 128 });
         this.load.image("vortex", "assets/vortex.png")
-        
+
         // --- FIX: Add the missing 'heart' image asset load for the HUD ---
         this.load.image('heart', 'assets/heart.png'); // 🚨 CHECK THIS PATH 🚨
     }
@@ -36,7 +36,7 @@ export default class Scene1 extends Phaser.Scene {
         .setOrigin(0, 0)
         .setDisplaySize(this.scale.width, this.scale.height)
         .setScrollFactor(0);
-    
+
         this.cameras.main.setZoom();
         this.cameras.main.centerOnY(this.scale.height / 2);
 
@@ -46,12 +46,12 @@ export default class Scene1 extends Phaser.Scene {
         });
         this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('idle', { start: 1, end: 2 }),
+            frames: this.anims.generateFrameNumbers('idle', { start: 6, end: 7 }),
             frameRate: 2,
             repeat: -1
         });
 
-        this.player = new Player(this, 200, 200, this.playerTears, 1);
+        this.player = new Player(this, 16, this.scale.height - 16 - 128, this.playerTears, 1);
         this.player.setCollideWorldBounds(true);
         this.player.setSize(32, 128);
         this.player.health = 3;
@@ -79,15 +79,18 @@ export default class Scene1 extends Phaser.Scene {
 
         // Attack animation
         this.anims.create({
-            key: 'attack',
-            frames: this.anims.generateFrameNumbers('player_attack', { start: 0, end: 9 }),
+            key: 'player_sword',
+            frames: this.anims.generateFrameNumbers('player_sword', { start: 0, end: 4 }),
             frameRate: 20,
             repeat: 0
         });
+
         this.anims.create({
-
+            key: "happy_hands",
+            frames: this.anims.generateFrameNumbers("jump", {start: 0, end: 0}),
+            frameRate: 10,
+            repeat: -1
         });
-
         this.anims.create({
             key: "devil_idle",
             frames: this.anims.generateFrameNumbers("devilIdle", {start: 0, end: 3}),
@@ -151,8 +154,8 @@ export default class Scene1 extends Phaser.Scene {
         this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
 
         // Enemy setup will only work if the Enemy class is correctly using the 'devilIdle' texture key
-        this.spawnEnemy(200, 200, 'patrol');
-        this.spawnEnemy(400, 120, 'chase');
+        // this.spawnEnemy(200, 200, 'patrol');
+        // this.spawnEnemy(400, 120, 'chase');
         this.physics.add.collider(this.enemies, this.platforms); // if you have platforms group
 
         this.physics.add.overlap(this.player, this.enemies, this.onPlayerHit, null, this);
@@ -171,11 +174,88 @@ export default class Scene1 extends Phaser.Scene {
 
         this.cameras.main.startFollow(this.player);
 
-            this.cameras.main.zoomTo(1.5, 1500, 'Sine.easeInOut');
+        this.cameras.main.setScroll(16, this.scale.height-128-16);
+        this.cameras.main.setZoom(1.222);
+
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
 
 
+        // Story text style
+        const textStyle = {
+            fontFamily: 'Georgia',
+            fontSize: '28px',
+            color: '#ffffcc',
+            align: 'center',
+            wordWrap: { width: this.scale.width * 0.8 }
+        };
+
+        // Empty text object (we’ll fill it letter by letter)
+        const storyText = this.add.text(
+            0,
+            this.scale.height / 2,
+            '',
+            textStyle
+        ).setOrigin(0.5);
+
+        const lines = [
+            "The man always lived a good life.",
+            "Full of happiness and courage.",
+            "Until the demons showed up.",
+            "Use F to attack",
+            "Look happy or angry to switch weapons"
+        ];
+
+        // Reveal text line by line
+        let lineIndex = 0;
+        const showNextLine = () => {
+            if (lineIndex >= lines.length) {
+                // Fade out and start next scene
+                this.time.delayedCall(2000, () => {
+
+                });
+                return;
+            }
+
+            this.revealText(lines[lineIndex], storyText, () => {
+                lineIndex++;
+                this.time.delayedCall(1000, showNextLine);
+            });
+        };
+
+        showNextLine();
 
     }
+
+
+    // helper: typewriter effect
+    revealText(fullText, textObject, onComplete) {
+        textObject.setText('');
+        let i = 0;
+        this.time.addEvent({
+            delay: 50,
+            repeat: fullText.length - 1,
+            callback: () => {
+                textObject.setText(fullText.substring(0, i + 1));
+                i++;
+                if (i === fullText.length && onComplete) {
+                    onComplete();
+                }
+            }
+        });
+
+
+
+
+        this.time.delayedCall(8000, () => {
+            this.spawnEnemy(400, this.scale.height - 128-16, "patrol");
+            this.spawnEnemy(500, this.scale.height - 228-16, "patrol");
+            this.spawnEnemy(600, this.scale.height - 128-16, "chase");
+            this.spawnEnemy(700, this.scale.height - 228-16, "chase");
+        });
+
+
+
+    }//
 
     sendPlayerState() {
         const gameData = {
@@ -189,6 +269,9 @@ export default class Scene1 extends Phaser.Scene {
             timestamp: Date.now()
         };
         WebSocketService.sendGameData(gameData);
+
+
+
     }
 
     handleAgentResponse(data) {
