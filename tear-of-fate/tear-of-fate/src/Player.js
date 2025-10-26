@@ -63,7 +63,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     shootHappyHands(state) {
         const handOffsetX = 10;
         const handOffsetY = 20;
-        const laserLength = 300;
+        const laserLength = 200;
         const startX = this.x + (this.flipX ? -handOffsetX : handOffsetX);
         const startY = this.y + handOffsetY;
         const endX = startX + (this.flipX ? -laserLength : laserLength);
@@ -87,7 +87,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             const bounds = enemy.getBounds(); // Phaser.Geom.Rectangle
             const line = new Phaser.Geom.Line(startX, startY, endX, endY);
             if (Phaser.Geom.Intersects.LineToRectangle(line, bounds)) {
-                enemy.takeDamage(10); // your damage logic
+                enemy.takeDamage(2); // your damage logic
             }
         });
 

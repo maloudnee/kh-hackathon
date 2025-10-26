@@ -23,7 +23,7 @@ export default class Scene1 extends Phaser.Scene {
         this.load.spritesheet("devilIdle", 'assets/Flying Demon 2D Pixel Art/Sprites/with_outline/IDLE.png', {frameWidth: 81, frameHeight: 71});
         this.load.image("tear", "assets/tear-png-33469.png");
         this.load.spritesheet("player_sword", 'assets/playersword.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.image("vortex", "assets/vortex.png")
+        this.load.spritesheet("vortex", "assets/vortex.png", { frameWidth: 256, frameHeight: 256 })
 
         // --- FIX: Add the missing 'heart' image asset load for the HUD ---
         this.load.image('heart', 'assets/heart.png'); // 🚨 CHECK THIS PATH 🚨
@@ -94,6 +94,12 @@ export default class Scene1 extends Phaser.Scene {
         this.anims.create({
             key: "devil_idle",
             frames: this.anims.generateFrameNumbers("devilIdle", {start: 0, end: 3}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: "vortex",
+            frames: this.anims.generateFrameNumbers("vortex", {start: 0, end: 5}),
             frameRate: 10,
             repeat: -1
         });
@@ -253,7 +259,10 @@ export default class Scene1 extends Phaser.Scene {
             this.spawnEnemy(700, this.scale.height - 228-16, "chase");
         });
 
-
+        this.time.delayedCall(15000, () => {
+            this.vortex = this.add.sprite(2100, this.scale.height-32, "vortex");
+            this.vortex.play("vortex", true);
+        });
 
     }//
 
@@ -333,5 +342,26 @@ export default class Scene1 extends Phaser.Scene {
         this.player.update(delta, inputs);
 
         this.updatePlayerHealthBar();
+        if(this.vortex) {
+            let dist = Phaser.Math.Distance.Between(
+                this.player.x, this.player.y,
+                this.vortex.x, this.vortex.y
+            );
+            if(dist < 50) {
+                // Shake the camera first
+                this.cameras.main.shake(300, 0.02, true);
+
+                // Listen for when the shake completes
+                this.cameras.main.once('camerashakecomplete', () => {
+                    // Now fade out
+                    this.cameras.main.fadeOut(1000, 0, 0, 0);
+
+                    // When fade is done, start Scene2
+                    this.cameras.main.once('camerafadeoutcomplete', () => {
+                        this.scene.start('scene2');
+                    });
+                });
+            }
+        }
     }
 }
