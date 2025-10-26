@@ -1,0 +1,25 @@
+import State from "../State.js"
+
+export default class AttackState extends State{
+    enter(player) {
+        this.locked = true;  // lock during the attack
+        player.body.setVelocityX(0);
+        player.anims.play('attack', true);
+        player.fireProjectile();
+
+        // Unlock when the attack animation ends
+        player.once('animationcomplete', () => {
+            this.locked = false;
+            this.stateMachine.transition('idle');
+        });
+
+    }
+
+    update(player, dt, inputs) {
+        // ignore movement input while attacking
+    }
+
+    exit(player) {
+        this.locked = false;
+    }
+}
