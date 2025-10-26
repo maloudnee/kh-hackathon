@@ -7,6 +7,7 @@ import HappyHands from "./weapons/HappyHands.js";
 import TearState from "./States/TearState.js";
 import HappyHandsState from "./States/HappyHandsState.js";
 import SwordState from "./States/SwordState.js";
+import Tear from "./weapons/Tear.js";
 
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
@@ -21,7 +22,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.graphics = scene.add.graphics();
         this.scene = scene;
 
-
         this.stateMachine = new StateMachine('idle', {
             idle: new IdleState(),
             run: new RunState(),
@@ -31,7 +31,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             sword: new SwordState()
         }, this);
 
-        this.currentWeapon = new HappyHands(this.scene);
+        this.currentWeapon = new Tear(this.scene);
 
     }
     setCurrentWeapon(weapon) {
@@ -52,6 +52,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     shootHappyHands(state) {
+        console.log("hands");
         const handOffsetX = 20;
         const handOffsetY = 10;
         const laserLength = 300;
@@ -102,7 +103,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(delta, inputs) {
-        this.stateMachine.step(delta, inputs)
+        this.stateMachine.step(delta, inputs);
     }
 
 }
