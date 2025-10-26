@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import StateMachine from "../StateMachine.js";
 import IdleState from "../States/IdleState.js";
 import RunState from "../States/RunState.js";
@@ -16,7 +17,7 @@ export default class Scene1 extends Phaser.Scene {
 
 
     preload() {
-        this.load.image('background', 'assets/background.png');
+        this.load.image('joybackground2', 'assets/joybackground2.png');
         this.load.spritesheet('idle', 'assets/StickmanPack/Idle/Thin.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
         this.load.spritesheet('run', "assets/StickmanPack/Run/Run.png", { frameWidth: 64, frameHeight: 64 });
@@ -67,12 +68,55 @@ export default class Scene1 extends Phaser.Scene {
         });
 
         this.playerTears = this.physics.add.group({
-                classType: Tear,
+            classType: Tear,
             runChildUpdate: true
         });
 
+        this.player = new Player(this, 200, 200, this.playerTears);
+        this.player.setCollideWorldBounds(true);
+        this.player.setSize(16, 64);
+        this.player.health = 3;
+        this.player.health = this.player.health.maxHealth;
+        this.physics.add.collider(this.player, ground);
 
-        this.add.image(200, 150, "background");
+        // --- PLAYER HEALTH BAR ---
+        this.playerHealthBar = this.add.graphics();
+        this.updatePlayerHealthBar();
+        // --- PLAYER HUD ---
+        this.lives = 3;
+        this.hearts = [];
+
+        const heartSize = 48; // big hearts
+        const padding = 10;   // padding from the right edge
+        const spacing = 8;    // distance between hearts
+
+        for (let i = 0; i < this.lives; i++) {
+            const heart = this.add.image(
+                this.scale.width - padding - i * spacing - heartSize * i, // subtract only spacing + previous heart sizes
+                padding + heartSize / 2,
+                'heart'
+            )
+            .setScrollFactor(0)
+            .setDisplaySize(heartSize, heartSize);
+            this.hearts.push(heart);
+        }
+
+
+        // Add score below the hearts
+        this.score = 0;
+        this.scoreText = this.add.text(
+            this.scale.width - padding,               // right-aligned x
+            padding + heartSize + 5,                  // y below hearts
+            'Score: 0',
+            {
+                font: '18px Arial',
+                fill: '#ffffff'
+            }
+        )
+        .setScrollFactor(0)
+        .setOrigin(1, 0); // align text to the right
+
+        this.add.image(200, 150, "joybackground2");
         this.player = new Player(this, 200, 200, this.playerTears);
         this.player.setCollideWorldBounds(true);
 
@@ -85,16 +129,20 @@ export default class Scene1 extends Phaser.Scene {
 
         this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
 
-
-
-
-
         this.spawnEnemy(200, 200, 'patrol');
         this.spawnEnemy(400, 120, 'chase');
         this.physics.add.collider(this.enemies, this.platforms); // if you have platforms group
 
         this.physics.add.overlap(this.player, this.enemies, this.onPlayerHit, null, this);
         this.physics.add.overlap(this.playerTears, this.enemies, this.onTearHit, null, this);
+
+        this.background = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'joybackground2')
+            .setOrigin(0, 0)
+            .setDisplaySize(this.scale.width, this.scale.height)
+            .setScrollFactor(0);
+        
+        this.cameras.main.setZoom(1.0);
+        this.cameras.main.centerOnY(this.scale.height / 2);
     }
 
 
@@ -117,7 +165,30 @@ export default class Scene1 extends Phaser.Scene {
         console.log(enemy.health);
     }
 
+    updatePlayerHealthBar() {
+        if (!this.player || !this.playerHealthBar) return;
+    
+        const x = this.player.x;
+        const y = this.player.y - 50;
+        const width = 40;
+        const height = 6;
+    
+        this.playerHealthBar.clear();
+    
+        // RED background
+        this.playerHealthBar.fillStyle(0xff0000, 1);
+        this.playerHealthBar.fillRect(x - width / 2, y, width, height);
+    
+        // GREEN foreground
+        this.playerHealthBar.fillStyle(0x00ff00, 1);
+        const health = Phaser.Math.Clamp(this.player.health, 0, 3); // 3 = max health
+        const healthWidth = width * (health / 3); // full green at start
+        this.playerHealthBar.fillRect(x - width / 2, y, healthWidth, height);
+    }
+
     update(time, delta) {
+        this.background.tilePositionX += 0.5; 
+
         const inputs = {
             left: this.cursors.left,
             right: this.cursors.right,
@@ -125,7 +196,6 @@ export default class Scene1 extends Phaser.Scene {
             attack: this.attackKey,
         };
         this.player.update(delta, inputs);
-
-
+        this.updatePlayerHealthBar();
     }
 }
