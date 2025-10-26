@@ -260,7 +260,7 @@ export default class Scene1 extends Phaser.Scene {
         });
 
         this.time.delayedCall(15000, () => {
-            this.vortex = this.add.sprite(2100, this.scale.height-32, "vortex");
+            this.vortex = this.add.sprite(850, this.scale.height-48, "vortex");
             this.vortex.play("vortex", true);
         });
 
@@ -329,6 +329,20 @@ export default class Scene1 extends Phaser.Scene {
         const healthWidth = width * (health / 3); // full green at start
         this.playerHealthBar.fillRect(x - width / 2, y, healthWidth, height);
     }
+    triggerVortex() {
+        this.cameras.main.shake(3000, 0.02, true);
+
+        // Listen for when the shake completes
+        this.cameras.main.once('camerashakecomplete', () => {
+            // Now fade out
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
+
+            // When fade is done, start Scene2
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start('scene2');
+            });
+        });
+    }
 
     update(time, delta) {
         this.background.tilePositionX += 0.5; 
@@ -342,25 +356,15 @@ export default class Scene1 extends Phaser.Scene {
         this.player.update(delta, inputs);
 
         this.updatePlayerHealthBar();
-        if(this.vortex) {
+        if(this.vortex && !this.triggeredVortex) {
             let dist = Phaser.Math.Distance.Between(
                 this.player.x, this.player.y,
                 this.vortex.x, this.vortex.y
             );
-            if(dist < 50) {
-                // Shake the camera first
-                this.cameras.main.shake(300, 0.02, true);
-
-                // Listen for when the shake completes
-                this.cameras.main.once('camerashakecomplete', () => {
-                    // Now fade out
-                    this.cameras.main.fadeOut(1000, 0, 0, 0);
-
-                    // When fade is done, start Scene2
-                    this.cameras.main.once('camerafadeoutcomplete', () => {
-                        this.scene.start('scene2');
-                    });
-                });
+            console.log(dist);
+            if(dist < 100) {
+                this.triggerVortex();
+                this.triggeredVortex = true;
             }
         }
     }
