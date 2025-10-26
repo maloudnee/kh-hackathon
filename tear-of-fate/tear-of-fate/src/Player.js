@@ -7,6 +7,7 @@ import HappyHands from "./weapons/HappyHands.js";
 import TearState from "./States/TearState.js";
 import HappyHandsState from "./States/HappyHandsState.js";
 import SwordState from "./States/SwordState.js";
+import Tear from "./weapons/Tear.js";
 
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
@@ -30,7 +31,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             sword: new SwordState()
         }, this);
 
-        this.currentWeapon = new HappyHands(this.scene);
+        this.currentWeapon = new Tear(this.scene);
 
     }
     setCurrentWeapon(weapon) {

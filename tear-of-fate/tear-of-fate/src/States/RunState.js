@@ -1,7 +1,7 @@
 import State from "../State.js"
-import Sword from "../../../../game/weapons/Sword.js";
-import Tear from "../../../../game/weapons/Tear.js";
-import HappyHands from "../../../../game/weapons/HappyHands.js";
+import Sword from "../weapons/Sword.js";
+import Tear from "../weapons/Tear.js";
+import HappyHands from "../weapons/HappyHands.js";
 
 export default class RunState extends State {
     enter(player) {
