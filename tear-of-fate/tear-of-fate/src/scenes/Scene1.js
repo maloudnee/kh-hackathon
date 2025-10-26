@@ -25,7 +25,7 @@ export default class Scene1 extends Phaser.Scene {
         // --- FIX: Add the missing 'heart' image asset load for the HUD ---
         this.load.image('heart', 'assets/heart.png'); // 🚨 CHECK THIS PATH 🚨
     }
-    
+
     player;
 
     create() {
@@ -50,6 +50,17 @@ export default class Scene1 extends Phaser.Scene {
         .setScale(1, 1.5); // optional: visually stretch vertically;
         this.physics.add.existing(ground, true);
         ground.setScrollFactor(0);
+
+        this.playerTears = this.physics.add.group({
+            classType: Tear,
+            runChildUpdate: true
+        });
+
+        this.player = new Player(this, 200, 200, this.playerTears);
+        this.player.setCollideWorldBounds(true);
+        this.player.setSize(16, 64);
+        this.player.health = 3;
+        this.player.health = this.player.health.maxHealth;
 
         this.physics.add.collider(this.player, ground);
         this.physics.world.gravity.y = 500;
@@ -88,17 +99,6 @@ export default class Scene1 extends Phaser.Scene {
             maxSize: 50, // max pooled enemies
             runChildUpdate: true // so each Enemy.preUpdate runs automatically
         });
-
-        this.playerTears = this.physics.add.group({
-            classType: Tear,
-            runChildUpdate: true
-        });
-
-        this.player = new Player(this, 200, 200, this.playerTears);
-        this.player.setCollideWorldBounds(true);
-        this.player.setSize(16, 64);
-        this.player.health = 3;
-        this.player.health = this.player.health.maxHealth;
 
         // --- PLAYER HEALTH BAR ---
         this.playerHealthBar = this.add.graphics();
