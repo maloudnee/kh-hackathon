@@ -61,8 +61,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     shootHappyHands(state) {
-        const handOffsetX = 20;
-        const handOffsetY = 10;
+        const handOffsetX = 10;
+        const handOffsetY = 20;
         const laserLength = 300;
         const startX = this.x + (this.flipX ? -handOffsetX : handOffsetX);
         const startY = this.y + handOffsetY;
@@ -76,7 +76,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         let angle = Math.atan2(dy, dx);
 
         let laser = this.scene.add.graphics();
-        laser.fillGradientStyle(0xff0000, 0xff00ff, 0xff00ff, 0xff0000, 1);
+        laser.fillGradientStyle(0xfff3b0, 0xfff3b0, 0xffcc00, 0xffcc00, 1);
         laser.fillRect(0, -2, length, 4); // width 4px, length along X
         laser.setPosition(startX, startY);
         laser.setRotation(angle);

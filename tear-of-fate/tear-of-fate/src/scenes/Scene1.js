@@ -15,10 +15,10 @@ export default class Scene1 extends Phaser.Scene {
 
     preload() {
         this.load.image('joybackground2', 'assets/joybackground2.png');
-        this.load.spritesheet('idle', 'assets/StickmanPack/Idle/Thin.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.image('ground', 'assets/ground.png');
-        this.load.spritesheet('run', "assets/player.png", { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet("jump", "assets/playerjumping.png", { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('idle', 'assets/playersword.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.image('ground', 'assets/platform.png');
+        this.load.spritesheet('run', "assets/playersword.png", { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet("jump", "assets/playerjumping.png", { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet("player_attack", "assets/StickmanPack/Punch/Punch.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("devilIdle", 'assets/Flying Demon 2D Pixel Art/Sprites/with_outline/IDLE.png', {frameWidth: 81, frameHeight: 71});
         this.load.image("tear", "assets/tear-png-33469.png");
@@ -37,22 +37,8 @@ export default class Scene1 extends Phaser.Scene {
         .setDisplaySize(this.scale.width, this.scale.height)
         .setScrollFactor(0);
     
-        this.cameras.main.setZoom(1.0);
+        this.cameras.main.setZoom();
         this.cameras.main.centerOnY(this.scale.height / 2);
-
-        // --- GROUND ---
-        const ground = this.add.tileSprite(
-            this.scale.width / 2,
-            this.scale.height - 0,
-            this.scale.width,
-            40,
-            'ground'
-        )
-        .setOrigin(0.5, 1) // anchor it to the bottom
-        .setScrollFactor(0)
-        .setScale(1, 1.5); // optional: visually stretch vertically;
-        this.physics.add.existing(ground, true);
-        ground.setScrollFactor(0);
 
         this.playerTears = this.physics.add.group({
             classType: Tear,
@@ -60,26 +46,33 @@ export default class Scene1 extends Phaser.Scene {
         });
         this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('idle', { start: 0, end: 5 }),
-            frameRate: 6,
+            frames: this.anims.generateFrameNumbers('idle', { start: 1, end: 2 }),
+            frameRate: 2,
             repeat: -1
         });
 
         this.player = new Player(this, 200, 200, this.playerTears, 1);
         this.player.setCollideWorldBounds(true);
-        this.player.setSize(16, 64);
+        this.player.setSize(32, 128);
         this.player.health = 3;
         this.player.health = this.player.health.maxHealth;
 
-        this.physics.add.collider(this.player, ground);
+        //this.physics.add.collider(this.player, ground);
+        this.enemies = this.physics.add.group();
         this.physics.world.gravity.y = 500;
+
         // Idle animation
 
-
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNumbers('jump', { start: 3, end: 8 }),
+            frameRate: 10,
+            repeat: 0
+        });
         // Run animation
         this.anims.create({
             key: 'run',
-            frames: this.anims.generateFrameNumbers('run', { start: 0, end: 5 }),
+            frames: this.anims.generateFrameNumbers('run', { start: 0, end: 4 }),
             frameRate: 10,
             repeat: -1
         });
@@ -90,6 +83,9 @@ export default class Scene1 extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('player_attack', { start: 0, end: 9 }),
             frameRate: 20,
             repeat: 0
+        });
+        this.anims.create({
+
         });
 
         this.anims.create({
@@ -144,8 +140,13 @@ export default class Scene1 extends Phaser.Scene {
         //this.player.setOffset(24, 0);
         this.cursors = this.input.keyboard.createCursorKeys();
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(200, 280, 'ground');
+        this.platforms.create(200, 280, 'ground').refreshBody();
+        this.platforms.create( 416/2 - 416, this.scale.height - 16, 'ground').refreshBody();
+        this.platforms.create( 416/2, this.scale.height - 16, 'ground').refreshBody();
+        this.platforms.create( 416/2 +416, this.scale.height - 16, 'ground').refreshBody();
+        this.platforms.create( 416/2 + 416*2, this.scale.height - 16, 'ground').refreshBody();
         this.physics.add.collider(this.player, this.platforms);
+
 
         this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
 
@@ -167,6 +168,13 @@ export default class Scene1 extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        this.cameras.main.startFollow(this.player);
+
+            this.cameras.main.zoomTo(1.5, 1500, 'Sine.easeInOut');
+
+
+
     }
 
     sendPlayerState() {

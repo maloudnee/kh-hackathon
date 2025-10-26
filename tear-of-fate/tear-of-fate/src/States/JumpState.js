@@ -2,7 +2,7 @@ import State from "../State.js"
 
 export default class JumpState extends State {
 
-    JUMP_VELOCITY = -200;
+    JUMP_VELOCITY = -300;
     enter(player) {
         player.setVelocityY(this.JUMP_VELOCITY)
         player.anims.play('jump', true);

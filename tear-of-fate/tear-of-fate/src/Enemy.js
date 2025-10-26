@@ -16,6 +16,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.active = false;
         this.recentlyHitPlayer = false;
         this.timeHit = 0;
+        this.setGravityY(20);
     }
 
     spawn(x, y, ai = 'patrol') {
@@ -59,15 +60,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta); // keep animations working
-        if (!this.active) return;
-        if(this.recentlyHitPlayer) {
-            this.ai = 'wander';
-            this.time += delta;
-            if(this.time > 2) {
-                this.ai = 'chase';
-                this.recentlyHitPlayer = false;
-            }
-        }
+
 
         // very simple AI
         if (this.ai === 'patrol') {

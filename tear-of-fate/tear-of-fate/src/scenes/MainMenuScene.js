@@ -30,7 +30,10 @@ export default class MainMenu extends Phaser.Scene {
             .setScale(0.1);
 
         playButton.on('pointerdown', () => {
-            this.scene.start('scene2'); 
+            this.cameras.main.fadeOut(1000, 0, 0, 0); // duration, r, g, b
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start('scene1');
+            });
         });
 
         playButton.on('pointerover', () => playButton.setTint(0x44ff44));
