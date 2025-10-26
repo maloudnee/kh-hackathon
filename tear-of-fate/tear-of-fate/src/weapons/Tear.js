@@ -10,8 +10,8 @@ export default class Tear extends Phaser.Physics.Arcade.Sprite {
         this.setGravityY(0);
     }
 
-    spawn(x, y, dir) {
-        this.setPosition(x, y);
+    attack(player) {
+        this.setPosition(player.body.x, player.body.y);
 
 
         this.setActive(true);

@@ -1,24 +1,25 @@
 import State from "../State.js"
 
-export default class AttackState extends State{
+export default class SwordState extends State {
+    locked = false
     enter(player) {
-        this.locked = true;  // lock during the attack
+        this.locked = false;  // lock during the attack
         player.body.setVelocityX(0);
-        player.anims.play('attack', true);
+        //player.anims.play('sword_attack', true);
+        player.swingSword();
 
         // Unlock when the attack animation ends
         player.once('animationcomplete', () => {
             this.locked = false;
             this.stateMachine.transition('idle');
+
         });
+        this.stateMachine.transition('idle');
+    }
+    update() {
 
     }
-
-    update(player, dt, inputs) {
-        // ignore movement input while attacking
-    }
-
-    exit(player) {
+    exit() {
         this.locked = false;
     }
 }

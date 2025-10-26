@@ -9,6 +9,8 @@ import TearState from "./States/TearState.js";
 import HappyHandState from "./States/HappyHandsState.js"
 import HappyHandsState from "./States/HappyHandsState.js";
 import SwordState from "./States/SwordState.js";
+import Phaser from 'phaser';
+
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     fire = 0;
