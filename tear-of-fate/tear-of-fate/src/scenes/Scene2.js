@@ -79,7 +79,7 @@ export default class Scene2 extends Phaser.Scene {
         this.ground = this.add.tileSprite(0, height - 32, width, 32, 'ground').setOrigin(0, 0);
         this.physics.add.existing(this.ground, true);
         
-        this.player = new Player(this, 200, 200, this.playerTears);
+        this.player = new Player(this, 200, 200, this.playerTears, 2);
         this.player.setCollideWorldBounds(true);
         this.player.setSize(16, 64);
 
@@ -137,6 +137,7 @@ export default class Scene2 extends Phaser.Scene {
         this.spawnEnemy(250, 100);
         this.spawnEnemy(450, 100);
         this.spawnEnemy(650, 100);
+        this.spawnEnemy(650, 300);
 
         // --- OVERLAPS ---
         this.physics.add.overlap(this.player, this.enemies, this.onPlayerHit, null, this);
@@ -212,6 +213,9 @@ export default class Scene2 extends Phaser.Scene {
         tear.destroy();
         this.happiness = Math.min(this.maxHappiness, this.happiness + 10);
         this.updateHappinessBar();
+        if(this.happiness >= this.maxHappiness) {
+            player.unlockedHappy = true;
+        }
     }
 
     update(time, delta) {

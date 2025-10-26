@@ -21,7 +21,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.body.setGravityY(250);
         this.tears = tears;
-        this.health = 3;
+        this.health = 5;
         this.graphics = scene.add.graphics();
         this.scene = scene;
 
@@ -47,7 +47,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.currentWeapon = weapon;
     }
 
-
     fireProjectile() {
         const projectile = this.tears.create(this.x, this.y, 'tear');
         projectile.setDisplaySize(16, 16);
@@ -55,9 +54,26 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         projectile.body.allowGravity = false;
         this.setAccelerationX(0);
     }
-
+    health = 5;
     takeDamage(num) {
         this.health -= num;
+        if(this.health <= 0) {
+            this.endGame();
+        }
+        console.log(this.health)
+    }
+    endGame() {
+        // Stop player movement
+        this.setVelocity(0, 0);
+        this.setActive(false);
+        this.setVisible(false);
+
+        // Optionally fade out before Game Over
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('GameOverScene');
+        });
     }
 
     shootHappyHands(state) {

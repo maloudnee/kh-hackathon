@@ -54,8 +54,7 @@ export default class Scene1 extends Phaser.Scene {
         this.player = new Player(this, 16, this.scale.height - 16 - 128, this.playerTears, 1);
         this.player.setCollideWorldBounds(true);
         this.player.setSize(32, 128);
-        this.player.health = 3;
-        this.player.health = this.player.health.maxHealth;
+
 
         //this.physics.add.collider(this.player, ground);
         this.enemies = this.physics.add.group();
@@ -299,8 +298,8 @@ export default class Scene1 extends Phaser.Scene {
 
 
     onPlayerHit(player, enemy) {
-        player.takeDamage(1);
-        enemy.setRecentlyHitPlayer();
+        player.takeDamage(1);console.log('hit detected'); // test
+
     }
     onTearHit(tear, enemy) {
         tear.destroy()
