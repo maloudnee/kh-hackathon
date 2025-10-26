@@ -25,10 +25,33 @@ export default class Scene1 extends Phaser.Scene {
         // --- FIX: Add the missing 'heart' image asset load for the HUD ---
         this.load.image('heart', 'assets/heart.png'); // 🚨 CHECK THIS PATH 🚨
     }
-
+    
     player;
 
     create() {
+        this.background = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'joybackground2')
+        .setOrigin(0, 0)
+        .setDisplaySize(this.scale.width, this.scale.height)
+        .setScrollFactor(0);
+    
+        this.cameras.main.setZoom(1.0);
+        this.cameras.main.centerOnY(this.scale.height / 2);
+
+        // --- GROUND ---
+        const ground = this.add.tileSprite(
+            this.scale.width / 2,
+            this.scale.height - 0,
+            this.scale.width,
+            40,
+            'ground'
+        )
+        .setOrigin(0.5, 1) // anchor it to the bottom
+        .setScrollFactor(0)
+        .setScale(1, 1.5); // optional: visually stretch vertically;
+        this.physics.add.existing(ground, true);
+        ground.setScrollFactor(0);
+
+        this.physics.add.collider(this.player, ground);
         this.physics.world.gravity.y = 500;
         // Idle animation
         this.anims.create({
@@ -129,31 +152,6 @@ export default class Scene1 extends Phaser.Scene {
 
         this.physics.add.overlap(this.player, this.enemies, this.onPlayerHit, null, this);
         this.physics.add.overlap(this.playerTears, this.enemies, this.onTearHit, null, this);
-
-    
-        this.background = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'joybackground2')
-            .setOrigin(0, 0)
-            .setDisplaySize(this.scale.width, this.scale.height)
-            .setScrollFactor(0);
-        
-        this.cameras.main.setZoom(1.0);
-        this.cameras.main.centerOnY(this.scale.height / 2);
-
-        // --- GROUND ---
-        const ground = this.add.tileSprite(
-            this.scale.width / 2,
-            this.scale.height - 0,
-            this.scale.width,
-            40,
-            'ground'
-        )
-        .setOrigin(0.5, 1) // anchor it to the bottom
-        .setScrollFactor(0)
-        .setScale(1, 1.5); // optional: visually stretch vertically;
-        this.physics.add.existing(ground, true);
-        ground.setScrollFactor(0);
-
-        this.physics.add.collider(this.player, ground);
     }
 
 
