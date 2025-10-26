@@ -62,7 +62,7 @@ export default class Scene1 extends Phaser.Scene {
             repeat: -1
         });
 
-        this.player = new Player(this, 200, 200, this.playerTears);
+        this.player = new Player(this, 200, 200, this.playerTears, 1);
         this.player.setCollideWorldBounds(true);
         this.player.setSize(16, 64);
         this.player.health = 3;

@@ -80,7 +80,7 @@ export default class Scene2 extends Phaser.Scene {
         this.ground = this.add.tileSprite(0, height - 32, width, 32, 'ground').setOrigin(0, 0);
             
         
-        this.player = new Player(this, 200, 200, this.playerTears);
+        this.player = new Player(this, 200, 200, this.playerTears, 2);
         this.player.setCollideWorldBounds(true);
 
         this.player.setSize(16, 64);

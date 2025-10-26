@@ -12,9 +12,11 @@ import Sword from "./weapons/Sword.js";
 
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-    fire = 0;
-    constructor(scene, x, y, tears) {
+
+    constructor(scene, x, y, tears, z) {
         super(scene, x, y, 'player');
+        this.level = z
+
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setGravityY(250);
